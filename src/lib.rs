@@ -10,3 +10,5 @@ pub mod grid;
 pub use grid::Grid;
 
 pub mod grid_iter;
+
+pub mod coordinate_translation;
