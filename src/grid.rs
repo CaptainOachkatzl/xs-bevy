@@ -1,7 +1,8 @@
-use std::ops::Index;
 use bevy::prelude::Component;
+use std::ops::Index;
 
 use crate::{grid_iter::GridIter, Position, Size2D};
+use crate::translation::index_translation::to_index;
 
 #[derive(Component, Clone)]
 pub struct Grid<T>
@@ -18,7 +19,10 @@ where
 {
   pub fn new(width: usize, height: usize, values: Box<[T]>) -> Self {
     assert!(values.len() == height * width);
-    Self { size: Size2D { width, height }, values }
+    Self {
+      size: Size2D { width, height },
+      values,
+    }
   }
 
   pub fn iter(&self) -> GridIter<T> {
@@ -37,18 +41,27 @@ where
     self.size.height
   }
 
-  pub fn get_value(&self, x: usize, y: usize) -> &T {
-    &self.values[x * y]
+  pub fn get_value(&self, x: usize, y: usize) -> Option<&T> {
+    self.get_value_by_position(Position { x, y })
   }
 
-  pub fn get_value_by_position(&self, position: Position) -> &T {
-    &self.values[position.x * position.y]
+  pub fn get_value_by_position(&self, position: Position) -> Option<&T> {
+    if self.in_bounds(position) {
+      return Some(&self.values[to_index(position, self.size)]);
+    }
+    else {
+      return None;
+    } 
+  }
+
+  fn in_bounds(&self, position: Position) -> bool {
+    position.x < self.size.width && position.y < self.size.height
   }
 }
 
 impl<'a, T> IntoIterator for &'a Grid<T>
 where
-  T: Copy
+  T: Copy,
 {
   type Item = (Position, T);
   type IntoIter = GridIter<'a, T>;
@@ -57,22 +70,22 @@ where
   }
 }
 
-impl<T> Index<(usize, usize)> for Grid<T>
+impl<'a, T> Index<(usize, usize)> for &'a Grid<T>
 where
   T: Copy,
 {
   type Output = T;
   fn index(&self, index: (usize, usize)) -> &Self::Output {
-    &self.get_value(index.0, index.1)
+    &self.values[to_index(Position::from_tuple(index), self.size)]
   }
 }
 
-impl<T> Index<Position> for Grid<T>
+impl<'a, T> Index<Position> for &'a Grid<T>
 where
   T: Copy,
 {
   type Output = T;
   fn index(&self, index: Position) -> &Self::Output {
-    &self.get_value_by_position(index)
+    &self.values[to_index(index, self.size)]
   }
 }

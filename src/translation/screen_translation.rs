@@ -3,16 +3,16 @@
 use crate::{field::Field, Position, Size2D};
 
 #[derive(Clone, Copy)]
-pub struct CoordinateTranslation {
+pub struct ScreenTranslation {
   pub screen_view: Field,
   pub logical_size: Size2D,
   pub logical_pixel_width: f32,
   pub logical_pixel_height: f32,
 }
 
-impl CoordinateTranslation {
-  pub fn new(screen_view: Field, logical_size: Size2D) -> CoordinateTranslation {
-    return CoordinateTranslation {
+impl ScreenTranslation {
+  pub fn new(screen_view: Field, logical_size: Size2D) -> ScreenTranslation {
+    return ScreenTranslation {
       screen_view,
       logical_size,
       logical_pixel_width: screen_view.size.width as f32 / logical_size.width as f32,

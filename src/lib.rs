@@ -5,10 +5,12 @@ pub mod size_2d;
 pub use size_2d::Size2D;
 
 pub mod field;
+pub use field::Field;
 
 pub mod grid;
 pub use grid::Grid;
 
 pub mod grid_iter;
 
-pub mod coordinate_translation;
+pub mod translation;
+pub use translation::*;
