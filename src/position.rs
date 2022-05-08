@@ -2,7 +2,7 @@ use std::ops::{Add, Sub, AddAssign, SubAssign};
 
 use bevy::prelude::Component;
 
-#[derive(Component, Clone, Copy, PartialEq, Eq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Position {
   pub x: usize,
   pub y: usize,
