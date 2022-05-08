@@ -21,7 +21,7 @@ impl ScreenTranslation {
   }
 
   pub fn get_logical_position_x(&self, screen_x: usize) -> Option<usize> {
-    if screen_x < self.screen_view.offset.x || screen_x > self.screen_view.offset.x + self.screen_view.size.width {
+    if !self.in_screen_bounds_horizontally(screen_x) {
       return None;
     }
     let logic_x = (screen_x - self.screen_view.offset.x) as f32 / self.logical_pixel_width;
@@ -29,11 +29,19 @@ impl ScreenTranslation {
   }
 
   pub fn get_logical_position_y(&self, screen_y: usize) -> Option<usize> {
-    if screen_y < self.screen_view.offset.y || screen_y > self.screen_view.offset.y + self.screen_view.size.height {
+    if !self.in_screen_bounds_vertically(screen_y) {
       return None;
     }
     let logic_y = (screen_y - self.screen_view.offset.y) as f32 / self.logical_pixel_height;
     return Some(logic_y as usize);
+  }
+
+  fn in_screen_bounds_horizontally(&self, screen_x: usize) -> bool {
+    (self.screen_view.offset.x..self.screen_view.offset.x + self.screen_view.size.width).contains(&screen_x)
+  }
+
+  fn in_screen_bounds_vertically(&self, screen_y: usize) -> bool {
+    (self.screen_view.offset.y..self.screen_view.offset.y + self.screen_view.size.height).contains(&screen_y)
   }
 
   pub fn get_logical_position(&self, screen_x: usize, screen_y: usize) -> Option<Position> {
