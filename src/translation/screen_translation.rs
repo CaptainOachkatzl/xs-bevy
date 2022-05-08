@@ -20,21 +20,34 @@ impl ScreenTranslation {
     };
   }
 
-  pub fn get_logical_position_x(&self, screen_x: usize) -> usize {
-    let logic_x = (screen_x - self.screen_view.offset.x) as f32 / self.logical_pixel_width;
-    return logic_x as usize;
-  }
-
-  pub fn get_logical_position_y(&self, screen_y: usize) -> usize {
-    let logic_y = (screen_y - self.screen_view.offset.y) as f32 / self.logical_pixel_height;
-    return logic_y as usize;
-  }
-
-  pub fn get_logical_position(&self, screen_x: usize, screen_y: usize) -> Position {
-    Position {
-      x: self.get_logical_position_x(screen_x),
-      y: self.get_logical_position_y(screen_y),
+  pub fn get_logical_position_x(&self, screen_x: usize) -> Option<usize> {
+    if screen_x < self.screen_view.offset.x || screen_x > self.screen_view.offset.x + self.screen_view.size.width {
+      return None;
     }
+    let logic_x = (screen_x - self.screen_view.offset.x) as f32 / self.logical_pixel_width;
+    return Some(logic_x as usize);
+  }
+
+  pub fn get_logical_position_y(&self, screen_y: usize) -> Option<usize> {
+    if screen_y < self.screen_view.offset.y || screen_y > self.screen_view.offset.y + self.screen_view.size.height {
+      return None;
+    }
+    let logic_y = (screen_y - self.screen_view.offset.y) as f32 / self.logical_pixel_height;
+    return Some(logic_y as usize);
+  }
+
+  pub fn get_logical_position(&self, screen_x: usize, screen_y: usize) -> Option<Position> {
+    let x = self.get_logical_position_x(screen_x);
+    let y = self.get_logical_position_y(screen_y);
+
+    if x.is_none() || y.is_none() {
+      return None;
+    }
+    
+    Some(Position {
+      x: x.unwrap(),
+      y: y.unwrap(),
+    })
   }
 
   pub fn block_center_to_pixel_position(&self, x: usize, y: usize) -> (f32, f32) {
