@@ -42,7 +42,7 @@ where
   }
 
   pub fn get_value(&self, x: usize, y: usize) -> Option<&T> {
-    self.get_value_by_position(Position { x, y })
+    self.get_value_by_position(Position { x: x as i64, y: y as i64 })
   }
 
   pub fn get_value_by_position(&self, position: Position) -> Option<&T> {
@@ -54,8 +54,22 @@ where
     } 
   }
 
+  pub fn get_sub_grid(&self, offset: Position, size: Size2D) -> Option<Grid<T>> {
+    let mut values = Vec::new();
+    for pos in size.iter() {
+      let grid_pos = offset + pos;
+      if !self.in_bounds(offset + pos) {
+        return None;
+      }
+
+      values.push(self.values[to_index(grid_pos, self.size)]);
+    }
+
+    Some(Grid::new(size.width, size.height, values.into_boxed_slice()))
+  }
+
   fn in_bounds(&self, position: Position) -> bool {
-    position.x < self.size.width && position.y < self.size.height
+    position.x >= 0 && position.y >= 0 && (position.x as usize) < self.size.width && (position.y as usize) < self.size.height
   }
 }
 
@@ -76,7 +90,7 @@ where
 {
   type Output = T;
   fn index(&self, index: (usize, usize)) -> &Self::Output {
-    &self.values[to_index(Position::from_tuple(index), self.size)]
+    &self.values[to_index(Position::from(index), self.size)]
   }
 }
 

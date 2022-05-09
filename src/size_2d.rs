@@ -35,13 +35,13 @@ impl<'a> Iterator for SizeIter<'a> {
   type Item = Position;
 
   fn next(&mut self) -> Option<Self::Item> {
-    if self.next_coords.y >= self.size.height {
+    if self.next_coords.y as usize >= self.size.height {
       return None;
     }
 
     let current_coords = self.next_coords.clone();
 
-    if self.next_coords.x >= self.size.width - 1 {
+    if self.next_coords.x as usize >= self.size.width - 1 {
       self.next_coords.y += 1;
       self.next_coords.x = 0;
     } else {

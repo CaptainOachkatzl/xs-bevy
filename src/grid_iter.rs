@@ -16,13 +16,13 @@ impl<'a, T> Iterator for GridIter<'a, T> where T: Copy {
   type Item = (Position, T);
 
   fn next(&mut self) -> Option<Self::Item> {
-    if self.next_coords.y >= self.grid.get_height() {
+    if self.next_coords.y as usize >= self.grid.get_height() {
       return None;
     }
 
     let current_coords = self.next_coords.clone();
 
-    if self.next_coords.x >= self.grid.get_width() - 1 {
+    if self.next_coords.x as usize >= self.grid.get_width() - 1 {
       self.next_coords.y += 1;
       self.next_coords.x = 0;
     } else {
@@ -31,7 +31,7 @@ impl<'a, T> Iterator for GridIter<'a, T> where T: Copy {
 
     Some((
       current_coords,
-      self.grid[(current_coords.x, current_coords.y)],
+      self.grid[(current_coords.x as usize, current_coords.y as usize)],
     ))
   }
 }
