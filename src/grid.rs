@@ -1,8 +1,8 @@
 use bevy::prelude::Component;
-use std::ops::Index;
+use std::ops::{Index, IndexMut};
 
-use crate::{grid_iter::GridIter, Position, Size2D};
 use crate::translation::index_translation::to_index;
+use crate::{grid_iter::*, Position, Size2D};
 
 #[derive(Component, Clone)]
 pub struct Grid<T>
@@ -48,10 +48,9 @@ where
   pub fn get_value_by_position(&self, position: Position) -> Option<&T> {
     if self.in_bounds(position) {
       return Some(&self.values[to_index(position, self.size)]);
-    }
-    else {
+    } else {
       return None;
-    } 
+    }
   }
 
   pub fn get_sub_grid(&self, offset: Position, size: Size2D) -> Option<Grid<T>> {
@@ -73,18 +72,18 @@ where
   }
 }
 
-impl<'a, T> IntoIterator for &'a Grid<T>
+impl<T> IntoIterator for Grid<T>
 where
   T: Copy,
 {
   type Item = (Position, T);
-  type IntoIter = GridIter<'a, T>;
+  type IntoIter = GridIntoIter<T>;
   fn into_iter(self) -> Self::IntoIter {
-    self.iter()
+    GridIntoIter::new(self)
   }
 }
 
-impl<'a, T> Index<(usize, usize)> for &'a Grid<T>
+impl<T> Index<(usize, usize)> for &Grid<T>
 where
   T: Copy,
 {
@@ -94,12 +93,31 @@ where
   }
 }
 
-impl<'a, T> Index<Position> for &'a Grid<T>
+impl<T> Index<Position> for &Grid<T>
 where
   T: Copy,
 {
   type Output = T;
   fn index(&self, index: Position) -> &Self::Output {
     &self.values[to_index(index, self.size)]
+  }
+}
+
+impl<T> Index<Position> for Grid<T>
+where
+  T: Copy,
+{
+  type Output = T;
+  fn index(&self, index: Position) -> &Self::Output {
+    &self.values[to_index(index, self.size)]
+  }
+}
+
+impl<T> IndexMut<Position> for Grid<T>
+where
+  T: Copy,
+{
+  fn index_mut(&mut self, index: Position) -> &mut Self::Output {
+    &mut self.values[to_index(index, self.size)]
   }
 }
