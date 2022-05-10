@@ -1,9 +1,6 @@
 use std::mem::{self, MaybeUninit};
 
-use crate::{
-  index_translation::to_position,
-  Position, Size2D,
-};
+use crate::{index_translation::to_position, Position, Size2D};
 
 pub struct GridIter<'a, T>
 where
@@ -31,6 +28,9 @@ where
 
   fn next(&mut self) -> Option<Self::Item> {
     self.index += 1;
+    if self.index as usize == self.values.len() {
+      return None;
+    }
     Some((to_position(self.index as usize, self.size), &self.values[self.index as usize]))
   }
 }
@@ -61,6 +61,9 @@ where
 
   fn next(&mut self) -> Option<Self::Item> {
     self.index += 1;
+    if self.index as usize == self.values.len() {
+      return None;
+    }
     let val: *mut T = &mut self.values[self.index as usize];
     Some((to_position(self.index as usize, self.size), unsafe { val.as_mut().unwrap() }))
   }
@@ -92,6 +95,9 @@ where
 
   fn next(&mut self) -> Option<Self::Item> {
     self.index += 1;
+    if self.index as usize == self.values.len() {
+      return None;
+    }
 
     Some((
       to_position(self.index as usize, self.size),
