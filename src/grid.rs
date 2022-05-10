@@ -38,6 +38,10 @@ where
     self.size.height
   }
 
+  pub fn len(&self) -> usize {
+    self.values.len()
+  }
+
   pub fn get_value(&self, x: usize, y: usize) -> Option<&T> {
     self.get_value_by_position(Position { x: x as i64, y: y as i64 })
   }
