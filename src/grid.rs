@@ -1,5 +1,6 @@
 use bevy::prelude::Component;
 use std::ops::{Index, IndexMut};
+use std::slice::{Iter, IterMut};
 
 use crate::translation::index_translation::to_index;
 use crate::{grid_iter::*, Position, Size2D};
@@ -23,10 +24,6 @@ where
       size: Size2D { width, height },
       values,
     }
-  }
-
-  pub fn iter(&self) -> GridIter<T> {
-    GridIter::new(&self)
   }
 
   pub fn get_size(&self) -> &Size2D {
@@ -53,6 +50,14 @@ where
     }
   }
 
+  pub fn get_mut_value_by_position(&mut self, position: Position) -> Option<&mut T> {
+    if self.in_bounds(position) {
+      return Some(&mut self.values[to_index(position, self.size)]);
+    } else {
+      return None;
+    }
+  }
+
   pub fn get_sub_grid(&self, offset: Position, size: Size2D) -> Option<Grid<T>> {
     let mut values = Vec::new();
     for pos in size.iter() {
@@ -67,19 +72,32 @@ where
     Some(Grid::new(size.width, size.height, values.into_boxed_slice()))
   }
 
+  pub fn into_array(self) -> Box<[T]> {
+    self.values
+  }
+
+  pub fn iter_with_position(&self) -> GridIter<T> {
+    GridIter::new(&self.values, self.size)
+  }
+
+  pub fn iter_mut_with_position(&mut self) -> GridIterMut<T> {
+    GridIterMut::new(&mut self.values, self.size)
+  }
+
+  pub fn into_iter_with_position(self) -> GridIntoIter<T> {
+    GridIntoIter::new(self.values, self.size)
+  }
+
+  pub fn iter(&self) -> Iter<T> {
+    self.values.iter()
+  }
+
+  pub fn iter_mut(&mut self) -> IterMut<T> {
+    self.values.iter_mut()
+  }
+
   fn in_bounds(&self, position: Position) -> bool {
     position.x >= 0 && position.y >= 0 && (position.x as usize) < self.size.width && (position.y as usize) < self.size.height
-  }
-}
-
-impl<T> IntoIterator for Grid<T>
-where
-  T: Copy,
-{
-  type Item = (Position, T);
-  type IntoIter = GridIntoIter<T>;
-  fn into_iter(self) -> Self::IntoIter {
-    GridIntoIter::new(self)
   }
 }
 
