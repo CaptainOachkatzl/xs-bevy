@@ -1,41 +1,21 @@
-use std::{
-  collections::HashMap,
-  sync::{Mutex, Once},
-};
+use std::sync::{Once};
 
-use crate::*;
+use crate::{*, patterns::factory_cache::FactoryCache};
 
 use super::*;
 
 pub fn cross_pattern(arm_length: usize) -> &'static GridPattern {
   static INIT: Once = Once::new();
-  static mut CROSS_PATTERNS: Option<HashMap<usize, GridPattern>> = None;
-  static mut PATTERN_LOCK: Option<Mutex<()>> = None;
+  static mut PATTERN_CACHE: Option<FactoryCache<usize, GridPattern>> = None;
 
   unsafe {
     // initialize hash map if its not
     INIT.call_once(|| {
-      PATTERN_LOCK = Some(Mutex::new(()));
-      CROSS_PATTERNS = Some(HashMap::new());
+      let factory_fn = Box::new(|x| new_cross_pattern(x));
+      PATTERN_CACHE = Some(FactoryCache::new(factory_fn));
     });
 
-    let cross_patterns = CROSS_PATTERNS.as_mut().unwrap();
-    // early check without mutex
-    if cross_patterns.contains_key(&arm_length) {
-      return &cross_patterns[&arm_length];
-    }
-
-    {
-      // check with lock if the key is still missing
-      let _guard = PATTERN_LOCK.as_ref().unwrap().lock().expect("poisoned mutex");
-      if !cross_patterns.contains_key(&arm_length) {
-        // insert in locked state
-        cross_patterns.insert(arm_length, new_cross_pattern(arm_length));
-      }
-      // can leave the lock here because entry is initialized and other thread can just read value
-    }
-
-    cross_patterns.get(&arm_length).unwrap()
+    PATTERN_CACHE.as_mut().unwrap().get(arm_length)
   }
 }
 

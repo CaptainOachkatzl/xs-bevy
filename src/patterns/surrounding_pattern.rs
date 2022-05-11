@@ -1,22 +1,31 @@
-use lazy_static::lazy_static;
+use std::sync::Once;
 
-use crate::*;
+use crate::{index_translation::to_index, *};
 
 use super::*;
 
-pub fn surrounding_pattern() -> &'static GridPattern {
-  &SURROUNDING_PATTERN
+pub fn surrounding_pattern(arm_length: usize) -> &'static GridPattern {
+  static INIT: Once = Once::new();
+  static mut PATTERN_CACHE: Option<FactoryCache<usize, GridPattern>> = None;
+
+  unsafe {
+    // initialize hash map if its not
+    INIT.call_once(|| {
+      let factory_fn = Box::new(|x| new_surrounding_pattern(x));
+      PATTERN_CACHE = Some(FactoryCache::new(factory_fn));
+    });
+
+    PATTERN_CACHE.as_mut().unwrap().get(arm_length)
+  }
 }
 
-lazy_static! {
-  static ref SURROUNDING_PATTERN: GridPattern = new_surrounding_pattern();
-}
-
-fn new_surrounding_pattern() -> GridPattern {
-  let mut mapping = [true; 9];
-  mapping[4] = false;
+pub fn new_surrounding_pattern(radius: usize) -> GridPattern {
+  let center = Position::from((radius, radius));
+  let diameter = radius * 2 + 1;
+  let mut mapping = vec![true; diameter * diameter];
+  mapping[to_index(center, Size2D::new(diameter, diameter))] = false;
   GridPattern {
-    mapping: Grid::new(3, 3, Box::new(mapping)),
-    center: Position::new(1, 1),
+    mapping: Grid::new(diameter, diameter, mapping.into_boxed_slice()),
+    center,
   }
 }
