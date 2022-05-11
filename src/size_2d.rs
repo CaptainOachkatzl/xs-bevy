@@ -7,13 +7,20 @@ pub struct Size2D {
 }
 
 impl Size2D {
-    pub fn get_size(&self) -> usize {
-      self.width * self.height
-    }
+  pub fn new(width: usize, height: usize) -> Self {
+    Size2D { width, height }
+  }
 
-    pub fn iter(&self) -> SizeIter {
-      SizeIter { size: self, next_coords: Position { x: 0, y: 0 } }
+  pub fn get_size(&self) -> usize {
+    self.width * self.height
+  }
+
+  pub fn iter(&self) -> SizeIter {
+    SizeIter {
+      size: self,
+      next_coords: Position { x: 0, y: 0 },
     }
+  }
 }
 
 #[derive(Clone, Copy)]
