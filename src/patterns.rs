@@ -9,6 +9,3 @@ pub use grid_pattern::*;
 
 pub mod surrounding_pattern;
 pub use surrounding_pattern::*;
-
-pub mod factory_cache;
-pub use factory_cache::*;
