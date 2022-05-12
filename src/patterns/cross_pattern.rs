@@ -9,7 +9,6 @@ pub fn cross_pattern(arm_length: usize) -> &'static GridPattern {
   static mut PATTERN_CACHE: Option<FactoryCache<usize, GridPattern>> = None;
 
   unsafe {
-    // initialize hash map if its not
     INIT.call_once(|| {
       let factory_fn = Box::new(|x| new_cross_pattern(x));
       PATTERN_CACHE = Some(FactoryCache::new(factory_fn));
