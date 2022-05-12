@@ -1,4 +1,9 @@
-use std::{collections::{BTreeMap, HashMap}, ops::Index, sync::Mutex, hash::Hash};
+use std::{
+  collections::{BTreeMap, HashMap},
+  hash::Hash,
+  ops::Index,
+  sync::Mutex,
+};
 
 pub trait Cache<K, V>: for<'a> Index<&'a K, Output = V>
 where
@@ -34,6 +39,25 @@ where
   }
 }
 
+/// # FactoryCache
+///
+/// Caches the output of a factory/generator function for the given parameter(s).
+/// 
+/// Repeated calls to "get" are served directly from the cache instead.
+///
+/// # Examples
+///
+/// ```
+/// fn intensive_calculation(as_f64: usize) -> f64 {
+///   thread::sleep(Duration::from_secs(2));
+///   as_f64 as f64
+/// }
+///
+/// let factory_cache = FactoryCache::new(Box::new(BTreeMap::new()), Box::new(|x| intensive_calculation(*x)));
+/// println!("{}", factory_cache.get(3)); // takes 2 seconds to write "3"
+/// println!("{}", factory_cache.get(5)); // takes 2 seconds to write "5"
+/// println!("{}", factory_cache.get(3)); // instantly writes "3"
+/// ```
 pub struct FactoryCache<K, V> {
   cache: Box<dyn Cache<K, V>>,
   lock: Mutex<()>,
@@ -42,7 +66,7 @@ pub struct FactoryCache<K, V> {
 
 impl<K, V> FactoryCache<K, V>
 where
-  K: Copy
+  K: Copy,
 {
   pub fn new(cache: Box<dyn Cache<K, V>>, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V> {
     FactoryCache {
@@ -63,7 +87,7 @@ where
       let _guard = self.lock.lock().expect("poisoned mutex");
       if !self.cache.contains_key(&key) {
         // insert in locked state
-  
+
         let val = (self.factory_fn)(&key);
         let ptr = self.cache.as_ref() as *const dyn Cache<K, V>;
         unsafe {
