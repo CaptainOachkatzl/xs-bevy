@@ -37,14 +37,14 @@ where
 pub struct FactoryCache<K, V> {
   cache: Box<dyn Cache<K, V>>,
   lock: Mutex<()>,
-  factory_fn: Box<dyn FnMut(K) -> V>,
+  factory_fn: Box<dyn Fn(&K) -> V>,
 }
 
 impl<K, V> FactoryCache<K, V>
 where
   K: Copy
 {
-  pub fn new(cache: Box<dyn Cache<K, V>>, factory_fn: Box<dyn FnMut(K) -> V>) -> FactoryCache<K, V> {
+  pub fn new(cache: Box<dyn Cache<K, V>>, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V> {
     FactoryCache {
       cache,
       lock: Mutex::new(()),
@@ -52,7 +52,7 @@ where
     }
   }
 
-  pub fn get(&mut self, key: K) -> &V {
+  pub fn get(&self, key: K) -> &V {
     // early check without mutex
     if self.cache.contains_key(&key) {
       return &self.cache[&key];
@@ -63,8 +63,19 @@ where
       let _guard = self.lock.lock().expect("poisoned mutex");
       if !self.cache.contains_key(&key) {
         // insert in locked state
-        let val = self.factory_fn.as_mut()(key);
-        self.cache.insert(key, val);
+  
+        let val = (self.factory_fn)(&key);
+        let ptr = self.cache.as_ref() as *const dyn Cache<K, V>;
+        unsafe {
+          // reasons why this is allowed:
+          // - cache is fully owned by this struct and can't be accessed from outside
+          // - this critical section is the only one to ever access this collection mutable
+
+          // reasons why this is needed:
+          // - "get" can be looked at as immutable from the outside because it takes &self
+          // - this allows multiple read only accesses to the cache in parallel
+          (ptr as *mut dyn Cache<K, V>).as_mut().unwrap().insert(key, val);
+        }
       }
       // can leave the lock here because entry is initialized and other thread can just read value
     }
