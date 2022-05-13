@@ -1,4 +1,4 @@
-use std::{sync::Once, collections::BTreeMap};
+use std::sync::Once;
 
 use crate::{index_translation::to_index, *};
 
@@ -11,7 +11,7 @@ pub fn surrounding_pattern(arm_length: usize) -> &'static GridPattern {
   unsafe {
     INIT.call_once(|| {
       let factory_fn: Box<dyn Fn(&usize) -> GridPattern> = Box::new(|x| new_surrounding_pattern(*x));
-      PATTERN_CACHE = Some(FactoryCache::new(Box::new(BTreeMap::new()), factory_fn));
+      PATTERN_CACHE = Some(FactoryCache::new(factory_fn));
     });
 
     PATTERN_CACHE.as_mut().unwrap().get(arm_length)
