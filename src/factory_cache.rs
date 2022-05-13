@@ -1,8 +1,9 @@
+use parking_lot::{RwLock, RwLockUpgradableReadGuard};
 use std::{
   collections::{BTreeMap, HashMap},
   hash::Hash,
   ops::Index,
-  sync::{Arc, RwLock},
+  sync::Arc,
 };
 
 pub trait Cache<K, V>: for<'a> Index<&'a K, Output = V> {
@@ -76,24 +77,15 @@ where
   }
 
   pub fn get(&self, key: K) -> Arc<V> {
-    {
-      let read_lock = self.cache.read().expect("poisoned mutex");
-      if let Some(val) = (*read_lock).get(&key) {
-        return val.clone();
-      }
-    }
-
-    // ---- todo: lock lost inbetween here, use upgradeable read/write lock instead
-
-    let mut write_lock = self.cache.write().expect("poisoned mutex");
-    let unlocked_cache = &mut *write_lock;
-    // check with write lock if the key is still missing
-    if let Some(val) = (*unlocked_cache).get(&key) {
+    let read_lock = self.cache.upgradable_read();
+    if let Some(val) = (*read_lock).get(&key) {
       return val.clone();
-    } else {
-      let val = Arc::new((self.factory_fn)(&key));
-      unlocked_cache.insert(key, val.clone());
-      return val;
     }
+
+    let mut write_lock = RwLockUpgradableReadGuard::upgrade(read_lock);
+    let unlocked_cache = &mut *write_lock;
+    let val = Arc::new((self.factory_fn)(&key));
+    unlocked_cache.insert(key, val.clone());
+    return val;
   }
 }

@@ -8,4 +8,4 @@ org = "xsware"
 
 [dependencies]
 bevy = "0.7.0"
-lazy_static = "1.4.0"
+parking_lot = "0.12.0"
