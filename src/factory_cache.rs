@@ -86,10 +86,10 @@ where
       // check with lock if the key is still missing
       let _guard = self.lock.lock().expect("poisoned mutex");
       if !self.cache.contains_key(&key) {
+        
         // insert in locked state
-
         let val = (self.factory_fn)(&key);
-        let ptr = self.cache.as_ref() as *const dyn Cache<K, V>;
+        let ptr: *const dyn Cache<K, V> = &*self.cache;
         unsafe {
           // reasons why this is allowed:
           // - cache is fully owned by this struct and can't be accessed from outside
@@ -98,7 +98,7 @@ where
           // reasons why this is needed:
           // - "get" can be looked at as immutable from the outside because it takes &self
           // - this allows multiple read only accesses to the cache in parallel
-          (ptr as *mut dyn Cache<K, V>).as_mut().unwrap().insert(key, val);
+          (*(ptr as *mut dyn Cache<K, V>)).insert(key, val);
         }
       }
       // can leave the lock here because entry is initialized and other thread can just read value
