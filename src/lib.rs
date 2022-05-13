@@ -19,3 +19,6 @@ pub mod patterns;
 
 pub mod factory_cache;
 pub use factory_cache::*;
+
+pub mod counter;
+pub use counter::*;
