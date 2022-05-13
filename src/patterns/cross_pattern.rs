@@ -1,17 +1,17 @@
-use std::sync::Once;
+use std::{sync::{Once, Arc}, collections::BTreeMap};
 
 use crate::*;
 
 use super::*;
 
-pub fn cross_pattern(arm_length: usize) -> &'static GridPattern {
+pub fn cross_pattern(arm_length: usize) -> Arc<GridPattern> {
   static INIT: Once = Once::new();
   static mut PATTERN_CACHE: Option<FactoryCache<usize, GridPattern>> = None;
 
   unsafe {
     INIT.call_once(|| {
       let factory_fn: Box<dyn Fn(&usize) -> GridPattern> = Box::new(|x| new_cross_pattern(*x));
-      PATTERN_CACHE = Some(FactoryCache::new(factory_fn));
+      PATTERN_CACHE = Some(FactoryCache::new(Box::new(BTreeMap::new()), factory_fn));
     });
 
     PATTERN_CACHE.as_mut().unwrap().get(arm_length)

@@ -1,4 +1,40 @@
-use std::{cell::UnsafeCell, sync::Mutex};
+use std::{
+  collections::{BTreeMap, HashMap},
+  hash::Hash,
+  ops::Index,
+  sync::{Arc, RwLock},
+};
+
+pub trait Cache<K, V>: for<'a> Index<&'a K, Output = V> {
+  fn get(&self, key: &K) -> Option<&V>;
+  fn insert(&mut self, key: K, value: V);
+}
+
+impl<K, V> Cache<K, V> for BTreeMap<K, V>
+where
+  K: Ord,
+{
+  fn get(&self, key: &K) -> Option<&V> {
+    self.get(key)
+  }
+
+  fn insert(&mut self, key: K, value: V) {
+    self.insert(key, value);
+  }
+}
+
+impl<K, V> Cache<K, V> for HashMap<K, V>
+where
+  K: Hash + Eq,
+{
+  fn get(&self, key: &K) -> Option<&V> {
+    self.get(key)
+  }
+
+  fn insert(&mut self, key: K, value: V) {
+    self.insert(key, value);
+  }
+}
 
 /// # FactoryCache
 ///
@@ -21,8 +57,7 @@ use std::{cell::UnsafeCell, sync::Mutex};
 /// ```
 ///
 pub struct FactoryCache<K, V> {
-  cache: UnsafeCell<Vec<(K, V)>>,
-  lock: Mutex<()>,
+  cache: RwLock<Box<dyn Cache<K, Arc<V>>>>,
   factory_fn: Box<dyn Fn(&K) -> V>,
 }
 
@@ -30,53 +65,32 @@ impl<K, V> FactoryCache<K, V>
 where
   K: PartialEq,
 {
-  pub fn new(factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V> {
+  pub fn new(cache: Box<dyn Cache<K, Arc<V>>>, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V> {
     FactoryCache {
-      cache: UnsafeCell::new(Vec::new()),
-      lock: Mutex::new(()),
+      cache: RwLock::new(cache),
       factory_fn,
     }
   }
 
-  pub fn get(&self, key: K) -> &V {
-    // early check without mutex
-    if let Some(val) = self.get_cached(&key) {
-      return val;
+  pub fn get(&self, key: K) -> Arc<V> {
+    {
+      let read_lock = self.cache.read().expect("poisoned mutex");
+      if let Some(val) = (**read_lock).get(&key) {
+        return val.clone();
+      }
     }
 
-    // check with lock if the key is still missing
-    let _guard = self.lock.lock().expect("poisoned mutex");
-    if let Some(val) = self.get_cached(&key) {
-      return val;
+    // ---- todo: lock lost inbetween here, use upgradeable read/write lock instead
+
+    let mut write_lock = self.cache.write().expect("poisoned mutex");
+    let unlocked_cache = &mut *write_lock;
+    // check with write lock if the key is still missing
+    if let Some(val) = (*unlocked_cache).get(&key) {
+      return val.clone();
     } else {
-      // insert in locked state
-      let val = (self.factory_fn)(&key);
-      unsafe {
-        // reasons why this is allowed:
-        // - cache is fully owned by this struct and can't be accessed from outside
-        // - this critical section is the only one to ever access this collection mutable
-        // - the insert is append-only -> pointers for old data stays valid
-
-        // reasons why this is needed:
-        // - "get" can be looked at as immutable from the outside because it takes &self
-        // - this allows multiple read only accesses to the cache in parallel
-        let vec = &mut *self.cache.get();
-        vec.push((key, val));
-
-        return &vec[vec.len() - 1].1;
-      }
+      let val = Arc::new((self.factory_fn)(&key));
+      unlocked_cache.insert(key, val.clone());
+      return val;
     }
-  }
-
-  fn get_cached(&self, key: &K) -> Option<&V> {
-    let vec = unsafe { &*self.cache.get() };
-    let length = vec.len();
-    for i in 0..length {
-      let (entry_key, value) = &vec[i];
-      if *entry_key == *key {
-        return Some(value);
-      }
-    }
-    return None;
   }
 }
