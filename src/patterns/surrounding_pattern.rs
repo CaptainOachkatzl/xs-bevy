@@ -1,21 +1,19 @@
-use std::{sync::{Once, Arc}, collections::BTreeMap};
+use std::{
+  collections::BTreeMap,
+  sync::Arc, lazy::SyncLazy,
+};
 
 use crate::{index_translation::to_index, *};
 
 use super::*;
 
 pub fn surrounding_pattern(arm_length: usize) -> Arc<GridPattern> {
-  static INIT: Once = Once::new();
-  static mut PATTERN_CACHE: Option<FactoryCache<usize, GridPattern>> = None;
+  static mut PATTERN_CACHE: SyncLazy<FactoryCache<usize, GridPattern, BTreeMap<usize, Arc<GridPattern>>>> = SyncLazy::new(|| {
+    let factory_fn: Box<dyn Fn(&usize) -> GridPattern> = Box::new(|x| new_surrounding_pattern(*x));
+    FactoryCache::new(BTreeMap::new(), factory_fn)
+  });
 
-  unsafe {
-    INIT.call_once(|| {
-      let factory_fn: Box<dyn Fn(&usize) -> GridPattern> = Box::new(|x| new_surrounding_pattern(*x));
-      PATTERN_CACHE = Some(FactoryCache::new(Box::new(BTreeMap::new()), factory_fn));
-    });
-
-    PATTERN_CACHE.as_mut().unwrap().get(arm_length)
-  }
+  unsafe { PATTERN_CACHE.get(arm_length) }
 }
 
 pub fn new_surrounding_pattern(radius: usize) -> GridPattern {

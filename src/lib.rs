@@ -1,3 +1,5 @@
+#![feature(once_cell)]
+
 pub mod position;
 pub use position::Position;
 

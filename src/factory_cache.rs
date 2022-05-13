@@ -56,16 +56,19 @@ where
 /// println!("{}", factory_cache.get(3)); // instantly writes "3"
 /// ```
 ///
-pub struct FactoryCache<K, V> {
-  cache: RwLock<Box<dyn Cache<K, Arc<V>>>>,
-  factory_fn: Box<dyn Fn(&K) -> V>,
+pub struct FactoryCache<K, V, C>
+where
+  C: Cache<K, Arc<V>>,
+{
+  cache: RwLock<C>,
+  factory_fn: Box<dyn Fn(&K) -> V>
 }
 
-impl<K, V> FactoryCache<K, V>
+impl<K, V, C> FactoryCache<K, V, C>
 where
-  K: PartialEq,
+  C: Cache<K, Arc<V>>,
 {
-  pub fn new(cache: Box<dyn Cache<K, Arc<V>>>, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V> {
+  pub fn new(cache: C, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V, C> {
     FactoryCache {
       cache: RwLock::new(cache),
       factory_fn,
@@ -75,7 +78,7 @@ where
   pub fn get(&self, key: K) -> Arc<V> {
     {
       let read_lock = self.cache.read().expect("poisoned mutex");
-      if let Some(val) = (**read_lock).get(&key) {
+      if let Some(val) = (*read_lock).get(&key) {
         return val.clone();
       }
     }

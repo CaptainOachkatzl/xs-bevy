@@ -1,9 +1,11 @@
+use std::collections::BTreeMap;
+
 use xs_bevy_core_2d::{Counter, FactoryCache};
 
 #[test]
 fn validate_results() {
   const TEST_CYCLES: i64 = 100;
-  let cache = FactoryCache::new(Box::new(generate_square));
+  let cache = FactoryCache::new(BTreeMap::new(), Box::new(generate_square));
 
   // check original results
   for i in 0..TEST_CYCLES {
@@ -29,7 +31,7 @@ fn confirm_cached() {
     return 1;
   };
 
-  let cache = FactoryCache::new(Box::new(call_counter));
+  let cache = FactoryCache::new(BTreeMap::new(), Box::new(call_counter));
 
   assert_eq!(COUNTER.count(), 0);
   cache.get(1);
