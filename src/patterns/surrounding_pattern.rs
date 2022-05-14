@@ -9,8 +9,7 @@ use super::*;
 
 pub fn surrounding_pattern(arm_length: usize) -> Arc<GridPattern> {
   static mut PATTERN_CACHE: SyncLazy<FactoryCache<usize, GridPattern, BTreeMap<usize, Arc<GridPattern>>>> = SyncLazy::new(|| {
-    let factory_fn: Box<dyn Fn(&usize) -> GridPattern> = Box::new(|x| new_surrounding_pattern(*x));
-    FactoryCache::new(BTreeMap::new(), factory_fn)
+    FactoryCache::new(BTreeMap::new(), Box::new(new_surrounding_pattern))
   });
 
   unsafe { PATTERN_CACHE.get(arm_length) }
