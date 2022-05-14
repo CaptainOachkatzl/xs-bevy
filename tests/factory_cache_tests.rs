@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, sync::{Barrier, Arc}, thread, time::Duration};
+use std::{collections::BTreeMap, sync::{Barrier, Arc}, thread};
 
 use xs_bevy_core_2d::{Counter, FactoryCache};
 
