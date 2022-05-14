@@ -62,14 +62,15 @@ where
   C: Cache<K, Arc<V>>,
 {
   cache: RwLock<C>,
-  factory_fn: Box<dyn Fn(&K) -> V>
+  factory_fn: Box<dyn Fn(K) -> V + Send + Sync>,
 }
 
 impl<K, V, C> FactoryCache<K, V, C>
 where
+  K: Clone,
   C: Cache<K, Arc<V>>,
 {
-  pub fn new(cache: C, factory_fn: Box<dyn Fn(&K) -> V>) -> FactoryCache<K, V, C> {
+  pub fn new(cache: C, factory_fn: Box<dyn Fn(K) -> V + Send + Sync>) -> FactoryCache<K, V, C> {
     FactoryCache {
       cache: RwLock::new(cache),
       factory_fn,
@@ -84,7 +85,7 @@ where
 
     let mut write_lock = RwLockUpgradableReadGuard::upgrade(read_lock);
     let unlocked_cache = &mut *write_lock;
-    let val = Arc::new((self.factory_fn)(&key));
+    let val = Arc::new((self.factory_fn)(key.clone()));
     unlocked_cache.insert(key, val.clone());
     return val;
   }
