@@ -24,3 +24,15 @@ impl PatternPositions for GridPattern {
     return result.into_boxed_slice();
   }
 }
+
+pub fn get_grid_values_from_pattern<T>(grid: &Grid<T>, center: Position, pattern: &dyn PatternPositions) -> Box<[T]>
+where
+  T: Copy,
+{
+  pattern
+    .get_pattern_positions(center)
+    .iter()
+    .filter_map(|&pos| grid.get_value_by_position(pos))
+    .collect::<Vec<_>>()
+    .into_boxed_slice()
+}
