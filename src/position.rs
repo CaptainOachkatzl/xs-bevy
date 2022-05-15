@@ -1,8 +1,8 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
-
 use bevy::prelude::Component;
+use serde::{Deserialize, Serialize};
 
-#[derive(Component, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Component, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Position {
   pub x: i64,
   pub y: i64,
@@ -28,9 +28,9 @@ impl From<(usize, usize)> for Position {
 }
 
 impl Into<(usize, usize)> for Position {
-    fn into(self) -> (usize, usize) {
-        (self.x as usize, self.y as usize)
-    }
+  fn into(self) -> (usize, usize) {
+    (self.x as usize, self.y as usize)
+  }
 }
 
 impl From<(i64, i64)> for Position {
