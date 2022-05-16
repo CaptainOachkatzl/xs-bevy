@@ -1,0 +1,25 @@
+#[derive(Clone)]
+pub struct TodoList<T> {
+  list: Vec<T>,
+  processed_counter: usize,
+}
+
+impl<T> TodoList<T> {
+  pub fn new() -> Self {
+    Self { list: vec!(), processed_counter: 0 }
+  }
+
+  pub fn get_new(&mut self) -> &[T] {
+    let start = self.processed_counter;
+    self.processed_counter = self.list.len();
+    &self.list[start..self.processed_counter]
+  }
+
+  pub fn get_all(&self) -> &[T] {
+    &self.list
+  }
+
+  pub fn push(&mut self, entry: T) {
+    self.list.push(entry);
+  }
+}
