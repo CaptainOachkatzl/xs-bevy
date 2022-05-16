@@ -2,7 +2,7 @@ use std::ops::{Add, AddAssign, Sub, SubAssign};
 use bevy::prelude::Component;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Component, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Component, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Position {
   pub x: i64,
   pub y: i64,
