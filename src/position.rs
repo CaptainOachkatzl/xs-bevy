@@ -2,10 +2,15 @@ use std::ops::{Add, AddAssign, Sub, SubAssign};
 use bevy::prelude::Component;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Component, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize, Component, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Position {
   pub x: i64,
   pub y: i64,
+}
+
+pub fn distance(a: Position, b: Position) -> f64 {
+  let vec = a - b;
+  f64::sqrt((vec.x.pow(2) + vec.y.pow(2)) as f64)
 }
 
 impl Position {
@@ -15,6 +20,10 @@ impl Position {
 
   pub fn zero() -> Self {
     Position { x: 0, y: 0 }
+  }
+
+  pub fn distance(&self, other: Position) -> f64 {
+    distance(*self, other)
   }
 }
 

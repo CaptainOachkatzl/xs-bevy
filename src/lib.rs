@@ -27,3 +27,6 @@ pub use counter::*;
 
 pub mod todo_list;
 pub use todo_list::*;
+
+pub mod pathing;
+pub use pathing::*;
