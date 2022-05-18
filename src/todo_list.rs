@@ -6,7 +6,10 @@ pub struct TodoList<T> {
 
 impl<T> TodoList<T> {
   pub fn new() -> Self {
-    Self { list: vec!(), processed_counter: 0 }
+    Self {
+      list: vec![],
+      processed_counter: 0,
+    }
   }
 
   pub fn get_new(&mut self) -> &[T] {
@@ -21,5 +24,12 @@ impl<T> TodoList<T> {
 
   pub fn push(&mut self, entry: T) {
     self.list.push(entry);
+  }
+
+  pub fn contains(&self, entry: &T) -> bool
+  where
+    T: PartialEq,
+  {
+    self.list.contains(entry)
   }
 }
