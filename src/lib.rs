@@ -1,5 +1,3 @@
-#![feature(once_cell)]
-
 pub mod position;
 pub use position::Position;
 
@@ -30,3 +28,6 @@ pub use todo_list::*;
 
 pub mod pathing;
 pub use pathing::*;
+
+pub mod kinetic_body;
+pub use kinetic_body::*;
