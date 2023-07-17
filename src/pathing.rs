@@ -1,17 +1,16 @@
-use bevy::prelude::Entity;
 use pathfinding::prelude::astar;
 
 use crate::{patterns::*, *};
 
-pub fn path_exists<'a>(grid: &Grid<Entity>, start: Position, end: Position, is_pathable_tile: &dyn Fn(Entity) -> bool) -> bool {
+pub fn path_exists<'a, T: Copy>(grid: &Grid<T>, start: Position, end: Position, is_pathable_tile: &dyn Fn(T) -> bool) -> bool {
     get_shortest_path(grid, start, end, is_pathable_tile).is_some()
 }
 
-pub fn get_shortest_path<'a>(
-    grid: &Grid<Entity>,
+pub fn get_shortest_path<'a, T: Copy>(
+    grid: &Grid<T>,
     start: Position,
     end: Position,
-    is_pathable_tile: &dyn Fn(Entity) -> bool,
+    is_pathable_tile: &dyn Fn(T) -> bool,
 ) -> Option<(Vec<Position>, i64)> {
     let cost = |node: &Position| {
         let distance = end - *node;
@@ -25,7 +24,7 @@ pub fn get_shortest_path<'a>(
     )
 }
 
-fn get_neighbors(grid: &Grid<Entity>, node: Position, is_pathable_tile: &dyn Fn(Entity) -> bool) -> Vec<(Position, i64)> {
+fn get_neighbors<T: Copy>(grid: &Grid<T>, node: Position, is_pathable_tile: &dyn Fn(T) -> bool) -> Vec<(Position, i64)> {
     adjacent_pattern()
         .get_pattern_positions(node)
         .iter()

@@ -1,11 +1,10 @@
-use bevy::prelude::Component;
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 
 use crate::translation::index_translation::to_index;
 use crate::{grid_iter::*, Position, Size2D};
 
-#[derive(Component, Clone)]
+#[derive(Clone)]
 pub struct Grid<T>
 where
     T: Copy,

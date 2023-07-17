@@ -56,7 +56,6 @@ where
 /// println!("{}", factory_cache.get(5)); // takes 2 seconds to write "5"
 /// println!("{}", factory_cache.get(3)); // instantly writes "3"
 /// ```
-///
 pub struct FactoryCache<K, V, C>
 where
     C: Cache<K, Arc<V>>,
