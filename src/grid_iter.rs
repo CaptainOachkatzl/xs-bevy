@@ -75,7 +75,7 @@ where
 {
     values: Box<[T]>,
     size: Size2D,
-    index: i64,
+    index: usize,
 }
 
 impl<T> GridIntoIter<T>
@@ -83,7 +83,7 @@ where
     T: Copy,
 {
     pub fn new(values: Box<[T]>, size: Size2D) -> Self {
-        GridIntoIter { values, size, index: -1 }
+        GridIntoIter { values, size, index: 0 }
     }
 }
 
@@ -93,17 +93,17 @@ where
 {
     type Item = (Position, T);
 
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self) -> Option<(Position, T)> {
+        let current_index = self.index;
         self.index += 1;
-        if self.index as usize == self.values.len() {
+
+        if current_index == self.values.len() {
             return None;
         }
 
         Some((
-            to_position(self.index as usize, self.size),
-            mem::replace(&mut self.values[self.index as usize], unsafe {
-                MaybeUninit::<T>::uninit().assume_init()
-            }),
+            to_position(current_index, self.size),
+            mem::replace(&mut self.values[current_index], unsafe { MaybeUninit::<T>::uninit().assume_init() }),
         ))
     }
 }
