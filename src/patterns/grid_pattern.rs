@@ -21,7 +21,7 @@ impl PatternPositions for GridPattern {
             }
         }
 
-        return result.into_boxed_slice();
+        result.into_boxed_slice()
     }
 }
 

@@ -4,14 +4,16 @@ pub struct TodoList<T> {
     processed_counter: usize,
 }
 
-impl<T> TodoList<T> {
-    pub fn new() -> Self {
+impl<T> Default for TodoList<T> {
+    fn default() -> Self {
         Self {
             list: vec![],
             processed_counter: 0,
         }
     }
+}
 
+impl<T> TodoList<T> {
     pub fn get_new(&mut self) -> &[T] {
         let start = self.processed_counter;
         self.processed_counter = self.list.len();

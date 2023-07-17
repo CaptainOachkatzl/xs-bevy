@@ -41,11 +41,15 @@ where
         self.values.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     pub fn get_value_by_position(&self, position: Position) -> Option<T> {
         if self.in_bounds(position) {
-            return Some(self.values[to_index(position, self.size)]);
+            Some(self.values[to_index(position, self.size)])
         } else {
-            return None;
+            None
         }
     }
 
@@ -55,17 +59,17 @@ where
 
     pub fn get_ref_by_position(&self, position: Position) -> Option<&T> {
         if self.in_bounds(position) {
-            return Some(&self.values[to_index(position, self.size)]);
+            Some(&self.values[to_index(position, self.size)])
         } else {
-            return None;
+            None
         }
     }
 
     pub fn get_mut_value_by_position(&mut self, position: Position) -> Option<&mut T> {
         if self.in_bounds(position) {
-            return Some(&mut self.values[to_index(position, self.size)]);
+            Some(&mut self.values[to_index(position, self.size)])
         } else {
-            return None;
+            None
         }
     }
 

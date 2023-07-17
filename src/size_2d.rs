@@ -46,7 +46,7 @@ impl<'a> Iterator for SizeIter<'a> {
             return None;
         }
 
-        let current_coords = self.next_coords.clone();
+        let current_coords = self.next_coords;
 
         if self.next_coords.x as usize >= self.size.width - 1 {
             self.next_coords.y += 1;

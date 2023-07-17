@@ -35,11 +35,11 @@ impl From<(usize, usize)> for Position {
     }
 }
 
-impl Into<(usize, usize)> for Position {
-    fn into(self) -> (usize, usize) {
-        (self.x as usize, self.y as usize)
-    }
-}
+// impl Into<(usize, usize)> for Position {
+//     fn into(self) -> (usize, usize) {
+//         (self.x as usize, self.y as usize)
+//     }
+// }
 
 impl From<(i64, i64)> for Position {
     fn from(position: (i64, i64)) -> Self {

@@ -12,12 +12,12 @@ pub struct ScreenTranslation {
 
 impl ScreenTranslation {
     pub fn new(screen_view: Field, logical_size: Size2D) -> ScreenTranslation {
-        return ScreenTranslation {
+        ScreenTranslation {
             screen_view,
             logical_size,
             logical_pixel_width: screen_view.size.width as f32 / logical_size.width as f32,
             logical_pixel_height: screen_view.size.height as f32 / logical_size.height as f32,
-        };
+        }
     }
 
     pub fn get_logical_position_x(&self, screen_x: usize) -> Option<i64> {
@@ -25,7 +25,7 @@ impl ScreenTranslation {
             return None;
         }
         let logic_x = (screen_x as i64 - self.screen_view.offset.x) as f32 / self.logical_pixel_width;
-        return Some(logic_x as i64);
+        Some(logic_x as i64)
     }
 
     pub fn get_logical_position_y(&self, screen_y: usize) -> Option<i64> {
@@ -33,7 +33,7 @@ impl ScreenTranslation {
             return None;
         }
         let logic_y = (screen_y as i64 - self.screen_view.offset.y) as f32 / self.logical_pixel_height;
-        return Some(logic_y as i64);
+        Some(logic_y as i64)
     }
 
     fn in_screen_bounds_horizontally(&self, screen_x: usize) -> bool {
@@ -59,14 +59,14 @@ impl ScreenTranslation {
     }
 
     pub fn block_center_to_pixel_position(&self, x: usize, y: usize) -> (f32, f32) {
-        return (self.horizontal_center_to_pixel(x), self.vertical_center_to_pixel(y));
+        (self.horizontal_center_to_pixel(x), self.vertical_center_to_pixel(y))
     }
 
     pub fn horizontal_center_to_pixel(&self, x: usize) -> f32 {
-        return self.screen_view.offset.x as f32 + (x as f32 * self.logical_pixel_width) + (self.logical_pixel_width / 2.);
+        self.screen_view.offset.x as f32 + (x as f32 * self.logical_pixel_width) + (self.logical_pixel_width / 2.)
     }
 
     pub fn vertical_center_to_pixel(&self, y: usize) -> f32 {
-        return self.screen_view.offset.y as f32 + (y as f32 * self.logical_pixel_height) + (self.logical_pixel_height / 2.);
+        self.screen_view.offset.y as f32 + (y as f32 * self.logical_pixel_height) + (self.logical_pixel_height / 2.)
     }
 }

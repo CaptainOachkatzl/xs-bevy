@@ -78,7 +78,7 @@ where
     index: i64,
 }
 
-impl<'a, T> GridIntoIter<T>
+impl<T> GridIntoIter<T>
 where
     T: Copy,
 {
