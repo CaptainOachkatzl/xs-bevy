@@ -45,17 +45,10 @@ impl ScreenTranslation {
     }
 
     pub fn get_logical_position(&self, screen_x: usize, screen_y: usize) -> Option<Position> {
-        let x = self.get_logical_position_x(screen_x);
-        let y = self.get_logical_position_y(screen_y);
+        let x = self.get_logical_position_x(screen_x)?;
+        let y = self.get_logical_position_y(screen_y)?;
 
-        if x.is_none() || y.is_none() {
-            return None;
-        }
-
-        Some(Position {
-            x: x.unwrap(),
-            y: y.unwrap(),
-        })
+        Some(Position { x, y })
     }
 
     pub fn block_center_to_pixel_position(&self, x: usize, y: usize) -> (f32, f32) {
