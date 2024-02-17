@@ -1,6 +1,6 @@
 use std::mem::{self, MaybeUninit};
 
-use crate::{index_translation::to_position, Position, Size2D};
+use super::{position::Position, size_2d::Size2D, translation::index_translation::to_position};
 
 pub struct GridIter<'a, T>
 where

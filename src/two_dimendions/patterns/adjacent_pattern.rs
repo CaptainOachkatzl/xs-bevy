@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::*;
+use super::{cross_pattern::{cross_pattern, new_cross_pattern}, grid_pattern::GridPattern};
 
 pub fn adjacent_pattern() -> Arc<GridPattern> {
     cross_pattern(1)

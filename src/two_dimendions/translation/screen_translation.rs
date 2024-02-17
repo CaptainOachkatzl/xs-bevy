@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::{field::Field, Position, Size2D};
+use crate::two_dimendions::{field::Field, position::Position, size_2d::Size2D};
 
 #[derive(Clone, Copy)]
 pub struct ScreenTranslation {

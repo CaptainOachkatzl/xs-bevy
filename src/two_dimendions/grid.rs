@@ -1,8 +1,8 @@
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 
-use crate::translation::index_translation::to_index;
-use crate::{grid_iter::*, Position, Size2D};
+use super::grid_iter::{GridIntoIter, GridIter, GridIterMut};
+use super::{ position::Position, translation::index_translation::to_index, size_2d::Size2D };
 
 #[derive(Clone)]
 pub struct Grid<T>

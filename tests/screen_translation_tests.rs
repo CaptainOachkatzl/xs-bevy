@@ -1,4 +1,4 @@
-use xs_bevy::*;
+use xs_bevy::two_dimendions::{field::Field, position::Position, size_2d::Size2D, translation::screen_translation::ScreenTranslation};
 
 #[test]
 fn out_of_bounds() {

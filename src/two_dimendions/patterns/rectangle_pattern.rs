@@ -2,9 +2,12 @@ use std::{collections::BTreeMap, sync::Arc};
 
 use once_cell::sync::Lazy;
 
-use crate::{index_translation::to_index, *};
-
-use super::*;
+use crate::{
+    two_dimendions::{
+        grid::Grid, patterns::grid_pattern::GridPattern, position::Position, size_2d::Size2D, translation::index_translation::to_index,
+    },
+    factory_cache::FactoryCache,
+};
 
 pub fn rectangle_pattern(offset_left: usize, offset_up: usize, offset_right: usize, offset_down: usize) -> Arc<GridPattern> {
     static mut PATTERN_CACHE: Lazy<

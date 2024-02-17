@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use super::*;
+use super::{
+    grid_pattern::GridPattern,
+    rectangle_pattern::{new_rectangle_pattern, rectangle_pattern},
+};
 
 pub fn surrounding_pattern(radius: usize) -> Arc<GridPattern> {
     rectangle_pattern(radius, radius, radius, radius)

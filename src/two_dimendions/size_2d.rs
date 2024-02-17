@@ -1,4 +1,4 @@
-use crate::Position;
+use super::position::Position;
 
 #[derive(Clone, Copy)]
 pub struct Size2D {

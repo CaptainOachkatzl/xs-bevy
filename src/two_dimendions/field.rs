@@ -1,4 +1,4 @@
-use crate::{Position, Size2D};
+use super::{position::Position, size_2d::Size2D};
 
 #[derive(Copy, Clone)]
 pub struct Field {

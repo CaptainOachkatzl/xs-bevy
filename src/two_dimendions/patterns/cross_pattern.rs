@@ -2,9 +2,12 @@ use std::{collections::BTreeMap, sync::Arc};
 
 use once_cell::sync::Lazy;
 
-use crate::*;
+use crate::{
+    factory_cache::FactoryCache,
+    two_dimendions::{grid::Grid, position::Position},
+};
 
-use super::*;
+use super::grid_pattern::GridPattern;
 
 pub fn cross_pattern(arm_length: usize) -> Arc<GridPattern> {
     static mut PATTERN_CACHE: Lazy<FactoryCache<usize, GridPattern, BTreeMap<usize, Arc<GridPattern>>>> =
