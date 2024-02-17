@@ -1,15 +1,20 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::{cell::OnceCell, collections::BTreeMap, sync::Arc};
 
-use once_cell::sync::Lazy;
-
-use crate::{two_dimendions::grid::{patterns::GridPattern, translation::index_translation::to_index, Grid, Position, Size2D}, FactoryCache};
+use crate::{
+    two_dimendions::grid::{patterns::GridPattern, translation::index_translation::to_index, Grid, Position, Size2D},
+    FactoryCache,
+};
 
 pub fn rectangle_pattern(offset_left: usize, offset_up: usize, offset_right: usize, offset_down: usize) -> Arc<GridPattern> {
-    static mut PATTERN_CACHE: Lazy<
+    static mut PATTERN_CACHE: OnceCell<
         FactoryCache<(usize, usize, usize, usize), GridPattern, BTreeMap<(usize, usize, usize, usize), Arc<GridPattern>>>,
-    > = Lazy::new(|| FactoryCache::new(BTreeMap::new(), Box::new(|(l, u, r, d)| new_rectangle_pattern(l, u, r, d))));
+    > = OnceCell::new();
 
-    unsafe { PATTERN_CACHE.get((offset_left, offset_up, offset_right, offset_down)) }
+    let cache = unsafe {
+        PATTERN_CACHE.get_or_init(|| FactoryCache::new(BTreeMap::new(), Box::new(|(l, u, r, d)| new_rectangle_pattern(l, u, r, d))))
+    };
+
+    cache.get((offset_left, offset_up, offset_right, offset_down))
 }
 
 pub fn new_rectangle_pattern(offset_left: usize, offset_up: usize, offset_right: usize, offset_down: usize) -> GridPattern {
