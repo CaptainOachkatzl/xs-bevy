@@ -145,20 +145,20 @@ mod test {
     use test_case::test_case;
 
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0., 
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0., 
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
         true; "complete overlap")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0., 
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 2., 0., 
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 2., 0.,
         false; "no collision on horizontal line")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0., 
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 2., 
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 2.,
         false; "no collision on vertical line")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0., 
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0.9, 0.9, 
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0.9, 0.9,
         true; "corner collision")]
     fn rectangle_collisions(
         frame1: CollisionFrame,
