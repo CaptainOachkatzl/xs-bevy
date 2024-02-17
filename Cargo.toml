@@ -1,5 +1,5 @@
 [package]
-name = "xs_bevy_core_2d"
+name = "xs-bevy"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
-use xs_bevy_core_2d::TodoList;
+use xs_bevy::TodoList;
 
 #[test]
 fn todo_list_test() {

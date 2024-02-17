@@ -1,4 +1,4 @@
-use xs_bevy_core_2d::*;
+use xs_bevy::*;
 
 #[test]
 fn out_of_bounds() {

@@ -1,4 +1,4 @@
-use xs_bevy_core_2d::{index_translation::to_position, Grid};
+use xs_bevy::{index_translation::to_position, Grid};
 
 #[test]
 fn iterate_over_end() {
