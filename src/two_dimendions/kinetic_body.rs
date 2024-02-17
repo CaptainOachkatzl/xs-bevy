@@ -8,7 +8,7 @@ pub struct RelativeRectangle {
 }
 
 impl RelativeRectangle {
-    fn to_absolute(self, center_x: f32, center_y: f32) -> Rectangle {
+    pub fn to_absolute(self, center_x: f32, center_y: f32) -> Rectangle {
         let left = center_x - self.offset_x;
         let top = center_y - self.offset_y;
         let right = left + self.width;
@@ -17,7 +17,7 @@ impl RelativeRectangle {
     }
 }
 
-struct Rectangle {
+pub struct Rectangle {
     pub left: f32,
     pub top: f32,
     pub right: f32,
