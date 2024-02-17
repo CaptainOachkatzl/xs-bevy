@@ -1,4 +1,4 @@
-use crate::two_dimendions::{grid::Grid, position::Position};
+use crate::two_dimendions::grid::{Grid, Position};
 
 pub trait PatternPositions {
     fn get_pattern_positions(&self, center: Position) -> Box<[Position]>;

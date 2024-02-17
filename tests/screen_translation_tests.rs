@@ -1,4 +1,4 @@
-use xs_bevy::two_dimendions::{field::Field, position::Position, size_2d::Size2D, translation::screen_translation::ScreenTranslation};
+use xs_games_rs::two_dimendions::grid::{translation::screen_translation::ScreenTranslation, Field, Position, Size2D};
 
 #[test]
 fn out_of_bounds() {

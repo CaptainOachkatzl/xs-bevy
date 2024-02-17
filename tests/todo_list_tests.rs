@@ -1,4 +1,4 @@
-use xs_bevy::TodoList;
+use xs_games_rs::TodoList;
 
 #[test]
 fn todo_list_test() {

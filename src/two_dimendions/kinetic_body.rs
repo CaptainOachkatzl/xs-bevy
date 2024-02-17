@@ -1,13 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Component)]
-pub struct Velocity(pub Vec2);
-
-#[derive(Component, Default, Reflect)]
-#[reflect(Component)]
-pub struct Mass(pub f32);
-
-#[derive(Clone, Copy, Reflect)]
+#[derive(Debug, Clone, Copy)]
 pub struct RelativeRectangle {
     pub height: f32,
     pub width: f32,
@@ -16,21 +9,16 @@ pub struct RelativeRectangle {
 }
 
 impl RelativeRectangle {
-    pub fn to_absolute(self, center: Vec2) -> Rectangle {
+    fn to_absolute(self, center: Vec2) -> Rectangle {
         let left = center.x - self.offset.x;
         let top = center.y - self.offset.y;
         let right = left + self.width;
         let bottom = top + self.height;
-        Rectangle {
-            left,
-            top,
-            right,
-            bottom,
-        }
+        Rectangle { left, top, right, bottom }
     }
 }
 
-pub struct Rectangle {
+struct Rectangle {
     pub left: f32,
     pub top: f32,
     pub right: f32,
@@ -38,61 +26,33 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    // pub fn contains_rect(&self, other: &Rectangle) -> bool {
-    //     self.left <= other.left
-    //         && self.bottom <= other.bottom
-    //         && self.right >= other.right
-    //         && self.top >= other.top
-    // }
-
     pub fn contains_point(&self, point: Vec2) -> bool {
-        self.left <= point.x
-            && self.top <= point.y
-            && self.right >= point.x
-            && self.bottom >= point.y
+        self.left <= point.x && self.top <= point.y && self.right >= point.x && self.bottom >= point.y
     }
 }
 
-#[derive(Component, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Copy)]
 pub enum CollisionFrame {
     Rectangle(RelativeRectangle),
     Circle(f32),
 }
 
-impl Default for CollisionFrame {
-    fn default() -> Self {
-        Self::Circle(default())
-    }
-}
-
 impl CollisionFrame {
-    pub fn collision(
-        &self,
-        position_self: Vec2,
-        other: &CollisionFrame,
-        position_other: Vec2,
-    ) -> bool {
+    pub fn collision(&self, position_self: Vec2, other: &CollisionFrame, position_other: Vec2) -> bool {
         match (self, other) {
             (Self::Circle(radius_self), Self::Circle(radius_other)) => {
                 collision_circles(*radius_self, position_self, *radius_other, position_other)
             }
-            (Self::Circle(radius), Self::Rectangle(rel_rect)) => collision_circle_with_rect(
-                *radius,
-                position_self,
-                &rel_rect.to_absolute(position_other),
-            ),
-            (Self::Rectangle(rel_rect), Self::Circle(radius)) => collision_circle_with_rect(
-                *radius,
-                position_other,
-                &rel_rect.to_absolute(position_self),
-            ),
-            (Self::Rectangle(rel_rect_self), Self::Rectangle(rel_rect_other)) => {
-                collision_rectangles(
-                    &rel_rect_self.to_absolute(position_self),
-                    &rel_rect_other.to_absolute(position_other),
-                )
+            (Self::Circle(radius), Self::Rectangle(rel_rect)) => {
+                collision_circle_with_rect(*radius, position_self, &rel_rect.to_absolute(position_other))
             }
+            (Self::Rectangle(rel_rect), Self::Circle(radius)) => {
+                collision_circle_with_rect(*radius, position_other, &rel_rect.to_absolute(position_self))
+            }
+            (Self::Rectangle(rel_rect_self), Self::Rectangle(rel_rect_other)) => collision_rectangles(
+                &rel_rect_self.to_absolute(position_self),
+                &rel_rect_other.to_absolute(position_other),
+            ),
         }
     }
 
@@ -103,11 +63,7 @@ impl CollisionFrame {
         }
     }
 
-    pub fn collision_with_any<'a>(
-        &self,
-        position: Vec2,
-        others: impl Iterator<Item = (&'a CollisionFrame, Vec2)>,
-    ) -> bool {
+    pub fn collision_with_any<'a>(&self, position: Vec2, others: impl Iterator<Item = (&'a CollisionFrame, Vec2)>) -> bool {
         for other in others.into_iter() {
             if self.collision(position, other.0, other.1) {
                 return true;
@@ -128,10 +84,7 @@ fn collision_circles(radius1: f32, center1: Vec2, radius2: f32, center2: Vec2) -
 }
 
 fn collision_rectangles(rec1: &Rectangle, rec2: &Rectangle) -> bool {
-    rec1.left < rec2.right
-        && rec1.right > rec2.left
-        && rec1.top < rec2.bottom
-        && rec1.bottom > rec2.top
+    rec1.left < rec2.right && rec1.right > rec2.left && rec1.top < rec2.bottom && rec1.bottom > rec2.top
 }
 
 fn collision_circle_with_rect(radius: f32, center: Vec2, rect: &Rectangle) -> bool {

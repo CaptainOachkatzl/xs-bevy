@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 
 use crate::{
     factory_cache::FactoryCache,
-    two_dimendions::{grid::Grid, position::Position},
+    two_dimendions::grid::{Grid, Position},
 };
 
 use super::grid_pattern::GridPattern;

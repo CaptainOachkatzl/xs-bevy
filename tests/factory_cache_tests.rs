@@ -4,7 +4,7 @@ use std::{
     thread,
 };
 
-use xs_bevy::{Counter, FactoryCache};
+use xs_games_rs::{Counter, FactoryCache};
 
 #[test]
 fn validate_results() {

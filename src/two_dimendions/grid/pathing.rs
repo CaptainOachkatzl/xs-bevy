@@ -1,9 +1,9 @@
 use pathfinding::prelude::astar;
 
 use super::{
-    grid::Grid,
     patterns::{adjacent_pattern::adjacent_pattern, grid_pattern::PatternPositions},
     position::Position,
+    Grid,
 };
 
 pub fn path_exists<T: Copy>(grid: &Grid<T>, start: Position, end: Position, is_pathable_tile: &dyn Fn(T) -> bool) -> bool {

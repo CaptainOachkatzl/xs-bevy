@@ -1,4 +1,4 @@
-use crate::two_dimendions::{position::Position, size_2d::Size2D};
+use crate::two_dimendions::grid::{Position, Size2D};
 
 pub fn to_index(position: Position, size: Size2D) -> usize {
     position.y as usize * size.width + position.x as usize
