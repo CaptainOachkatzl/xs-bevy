@@ -1,17 +1,19 @@
 use super::position::Position;
 
+/// logical, rectangular size in 2D space
 #[derive(Clone, Copy)]
-pub struct Size2D {
+pub struct RectSize {
     pub width: usize,
     pub height: usize,
 }
 
-impl Size2D {
-    pub fn new(width: usize, height: usize) -> Self {
-        Size2D { width, height }
+impl RectSize {
+    pub const fn new(width: usize, height: usize) -> Self {
+        RectSize { width, height }
     }
 
-    pub fn get_size(&self) -> usize {
+    /// amount of logical spaces available
+    pub fn len(&self) -> usize {
         self.width * self.height
     }
 
@@ -25,12 +27,12 @@ impl Size2D {
 
 #[derive(Clone, Copy)]
 pub struct SizeIter<'a> {
-    size: &'a Size2D,
+    size: &'a RectSize,
     next_coords: Position,
 }
 
 impl<'a> SizeIter<'a> {
-    pub fn new(size: &'a Size2D) -> Self {
+    pub fn new(size: &'a RectSize) -> Self {
         SizeIter {
             size,
             next_coords: Position { x: 0, y: 0 },

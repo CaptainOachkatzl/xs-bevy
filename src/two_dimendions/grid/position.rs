@@ -12,12 +12,10 @@ pub fn distance(a: Position, b: Position) -> f64 {
 }
 
 impl Position {
-    pub fn new(x: i64, y: i64) -> Self {
+    pub const ZERO: Position = Position { x: 0, y: 0 };
+    
+    pub const fn new(x: i64, y: i64) -> Self {
         Position { x, y }
-    }
-
-    pub fn zero() -> Self {
-        Position { x: 0, y: 0 }
     }
 
     pub fn distance(&self, other: Position) -> f64 {

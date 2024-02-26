@@ -1,7 +1,7 @@
 use pathfinding::prelude::astar;
 
 use super::{
-    patterns::{adjacent_pattern::adjacent_pattern, grid_pattern::PatternPositions},
+    patterns::{adjacent_pattern::adjacent_pattern, PatternPositions},
     position::Position,
     Grid,
 };
@@ -33,7 +33,7 @@ fn get_neighbors<T: Copy>(grid: &Grid<T>, node: Position, is_pathable_tile: &dyn
         .get_pattern_positions(node)
         .iter()
         .filter_map(|&pos| {
-            let entity = grid.get_value_by_position(pos)?;
+            let entity = grid.get(pos)?;
             if is_pathable_tile(entity) {
                 Some((pos, 1))
             } else {

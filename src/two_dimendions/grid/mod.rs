@@ -2,25 +2,34 @@ use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 
 use grid_iter::{GridIntoIter, GridIter, GridIterMut};
-use translation::index_translation::to_index;
 
-pub mod field;
-pub use field::Field;
 pub mod grid_iter;
 pub mod pathing;
 pub mod patterns;
 pub mod position;
 pub use position::Position;
-pub mod size_2d;
-pub use size_2d::Size2D;
-pub mod translation;
+pub mod rect_size;
+pub use rect_size::RectSize;
+pub mod screen_translation;
+pub use screen_translation::*;
+
+pub fn to_grid_index(position: Position, size: RectSize) -> usize {
+    position.y as usize * size.width + position.x as usize
+}
+
+pub fn to_grid_position(index: usize, size: RectSize) -> Position {
+    Position {
+        x: (index % size.width) as i64,
+        y: (index / size.height) as i64,
+    }
+}
 
 #[derive(Clone)]
 pub struct Grid<T>
 where
     T: Copy,
 {
-    size: Size2D,
+    size: RectSize,
     values: Box<[T]>,
 }
 
@@ -28,63 +37,61 @@ impl<T> Grid<T>
 where
     T: Copy,
 {
-    pub fn new(width: usize, height: usize, values: Box<[T]>) -> Self {
+    pub const fn new(width: usize, height: usize, values: Box<[T]>) -> Self {
         assert!(values.len() == height * width);
         Self {
-            size: Size2D { width, height },
+            size: RectSize { width, height },
             values,
         }
     }
 
-    pub fn get_size(&self) -> &Size2D {
-        &self.size
+    pub const fn size(&self) -> RectSize {
+        self.size
     }
 
-    pub fn get_width(&self) -> usize {
+    pub const fn width(&self) -> usize {
         self.size.width
     }
 
-    pub fn get_height(&self) -> usize {
+    pub const fn height(&self) -> usize {
         self.size.height
     }
 
-    pub fn len(&self) -> usize {
+    pub const fn len(&self) -> usize {
         self.values.len()
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    pub fn get_value_by_position(&self, position: Position) -> Option<T> {
+    pub fn get(&self, position: Position) -> Option<T> {
         if self.in_bounds(position) {
-            Some(self.values[to_index(position, self.size)])
+            Some(self.values[to_grid_index(position, self.size)])
         } else {
             None
         }
     }
 
-    pub fn get_ref(&self, x: usize, y: usize) -> Option<&T> {
-        self.get_ref_by_position(Position { x: x as i64, y: y as i64 })
+    // TODO: add error type
+    pub fn set(&mut self, position: Position, value: T) -> Result<(), ()> {
+        if self.in_bounds(position) {
+            self.values[to_grid_index(position, self.size)] = value;
+            Ok(())
+        } else {
+            Err(())
+        }
     }
 
-    pub fn get_ref_by_position(&self, position: Position) -> Option<&T> {
+    pub fn get_mut(&mut self, position: Position) -> Option<&mut T> {
         if self.in_bounds(position) {
-            Some(&self.values[to_index(position, self.size)])
+            Some(&mut self.values[to_grid_index(position, self.size)])
         } else {
             None
         }
     }
 
-    pub fn get_mut_value_by_position(&mut self, position: Position) -> Option<&mut T> {
-        if self.in_bounds(position) {
-            Some(&mut self.values[to_index(position, self.size)])
-        } else {
-            None
-        }
-    }
-
-    pub fn get_sub_grid(&self, offset: Position, size: Size2D) -> Option<Grid<T>> {
+    pub fn get_sub_grid(&self, offset: Position, size: RectSize) -> Option<Grid<T>> {
         let mut values = Vec::new();
         for pos in size.iter() {
             let grid_pos = offset + pos;
@@ -92,7 +99,7 @@ where
                 return None;
             }
 
-            values.push(self.values[to_index(grid_pos, self.size)]);
+            values.push(self.values[to_grid_index(grid_pos, self.size)]);
         }
 
         Some(Grid::new(size.width, size.height, values.into_boxed_slice()))
@@ -122,7 +129,7 @@ where
         self.values.iter_mut()
     }
 
-    fn in_bounds(&self, position: Position) -> bool {
+    const fn in_bounds(&self, position: Position) -> bool {
         position.x >= 0 && position.y >= 0 && (position.x as usize) < self.size.width && (position.y as usize) < self.size.height
     }
 }
@@ -133,7 +140,7 @@ where
 {
     type Output = T;
     fn index(&self, index: (usize, usize)) -> &Self::Output {
-        &self.values[to_index(Position::from(index), self.size)]
+        &self.values[to_grid_index(Position::from(index), self.size)]
     }
 }
 
@@ -143,7 +150,7 @@ where
 {
     type Output = T;
     fn index(&self, index: Position) -> &Self::Output {
-        &self.values[to_index(index, self.size)]
+        &self.values[to_grid_index(index, self.size)]
     }
 }
 
@@ -153,7 +160,7 @@ where
 {
     type Output = T;
     fn index(&self, index: Position) -> &Self::Output {
-        &self.values[to_index(index, self.size)]
+        &self.values[to_grid_index(index, self.size)]
     }
 }
 
@@ -162,6 +169,6 @@ where
     T: Copy,
 {
     fn index_mut(&mut self, index: Position) -> &mut Self::Output {
-        &mut self.values[to_index(index, self.size)]
+        &mut self.values[to_grid_index(index, self.size)]
     }
 }

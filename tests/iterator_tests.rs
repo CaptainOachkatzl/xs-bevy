@@ -1,4 +1,4 @@
-use xs_games_rs::two_dimendions::grid::{translation::index_translation::to_position, Grid};
+use xs_games_rs::two_dimendions::grid::{to_grid_position, Grid};
 
 #[test]
 fn iterate_over_end() {
@@ -26,12 +26,12 @@ fn iterate_mutable() {
 #[test]
 fn iterate_move() {
     let grid = Grid::new(2, 2, Box::new([1; 4]));
-    let size = *grid.get_size();
+    let size = grid.size();
     let mut list: Vec<i32> = vec![];
     let mut index: i64 = -1;
     for i in grid.into_iter_with_position() {
         index += 1;
         list.push(i.1);
-        assert_eq!(to_position(index as usize, size), i.0);
+        assert_eq!(to_grid_position(index as usize, size), i.0);
     }
 }
