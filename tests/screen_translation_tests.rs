@@ -6,26 +6,26 @@ use xs_games_rs::{
 #[test]
 fn out_of_bounds() {
     let translation = create_test_translation();
-    assert!(translation.get_logical_position(40., 200.).is_none()); // y outer bounds
-    assert!(translation.get_logical_position(9., 70.).is_none()); // x inner bounds
+    assert!(translation.get_grid_position(40., 200.).is_none()); // y outer bounds
+    assert!(translation.get_grid_position(9., 70.).is_none()); // x inner bounds
 }
 
 #[test]
 fn minimal_edge_case() {
     let translation = create_test_translation();
-    assert_eq!(translation.get_logical_position(10., 50.).unwrap(), Position::new(0, 0));
+    assert_eq!(translation.get_grid_position(10., 50.).unwrap(), Position::new(0, 0));
 }
 
 #[test]
 fn maximum_edge_case() {
     let translation = create_test_translation();
-    assert_eq!(translation.get_logical_position(109., 149.).unwrap(), Position::new(9, 9));
+    assert_eq!(translation.get_grid_position(109., 149.).unwrap(), Position::new(9, 9));
 }
 
 #[test]
 fn negative_values() {
     let translation = create_test_translation_negative();
-    assert_eq!(translation.get_logical_position(0., 0.).unwrap(), Position::new(5, 5));
+    assert_eq!(translation.get_grid_position(0., 0.).unwrap(), Position::new(5, 5));
     assert_eq!(translation.block_center_to_screen_position(0, 0), (-45., -45.));
 }
 
