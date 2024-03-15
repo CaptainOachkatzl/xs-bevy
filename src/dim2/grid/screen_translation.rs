@@ -16,8 +16,8 @@ impl ScreenTranslation {
         ScreenTranslation {
             screen_view,
             grid_size,
-            tile_width: screen_view.width as f32 / grid_size.width as f32,
-            tile_height: screen_view.height as f32 / grid_size.height as f32,
+            tile_width: screen_view.width / grid_size.width as f32,
+            tile_height: screen_view.height / grid_size.height as f32,
         }
     }
 
@@ -25,7 +25,7 @@ impl ScreenTranslation {
         if !self.in_screen_bounds_horizontally(screen_x) {
             return None;
         }
-        let logic_x = (screen_x - self.screen_view.offset_x) as f32 / self.tile_width;
+        let logic_x = (screen_x - self.screen_view.offset_x) / self.tile_width;
         Some(logic_x as i64)
     }
 
@@ -33,7 +33,7 @@ impl ScreenTranslation {
         if !self.in_screen_bounds_vertically(screen_y) {
             return None;
         }
-        let logic_y = (screen_y - self.screen_view.offset_y) as f32 / self.tile_height;
+        let logic_y = (screen_y - self.screen_view.offset_y) / self.tile_height;
         Some(logic_y as i64)
     }
 
@@ -57,10 +57,10 @@ impl ScreenTranslation {
     }
 
     pub fn horizontal_center_to_pixel(&self, x: i64) -> f32 {
-        self.screen_view.offset_x as f32 + (x as f32 * self.tile_width) + (self.tile_width / 2.)
+        self.screen_view.offset_x + (x as f32 * self.tile_width) + (self.tile_width / 2.)
     }
 
     pub fn vertical_center_to_pixel(&self, y: i64) -> f32 {
-        self.screen_view.offset_y as f32 + (y as f32 * self.tile_height) + (self.tile_height / 2.)
+        self.screen_view.offset_y + (y as f32 * self.tile_height) + (self.tile_height / 2.)
     }
 }

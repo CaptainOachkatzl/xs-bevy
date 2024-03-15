@@ -17,6 +17,10 @@ impl RectSize {
         self.width * self.height
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
     pub fn iter(&self) -> SizeIter {
         SizeIter {
             size: self,

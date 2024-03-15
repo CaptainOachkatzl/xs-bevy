@@ -6,7 +6,7 @@ pub struct Counter {
 
 impl Counter {
     pub const fn new() -> Self {
-        Counter {
+        Self {
             counter: AtomicUsize::new(0),
         }
     }
@@ -17,5 +17,11 @@ impl Counter {
 
     pub fn count(&self) -> usize {
         self.counter.load(Ordering::SeqCst)
+    }
+}
+
+impl Default for Counter {
+    fn default() -> Self {
+        Self::new()
     }
 }
