@@ -1,5 +1,5 @@
 use xs_games_rs::{
-    two_dimendions::grid::{Position, RectSize, ScreenTranslation},
+    dim2::grid::{Position, RectSize, ScreenTranslation},
     ScreenView,
 };
 

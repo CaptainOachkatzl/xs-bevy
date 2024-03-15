@@ -1,5 +1,5 @@
 use super::PatternPositions;
-use crate::two_dimendions::grid::{Grid, Position};
+use crate::dim2::grid::{Grid, Position};
 
 pub struct GridPattern {
     pub mapping: Grid<bool>,

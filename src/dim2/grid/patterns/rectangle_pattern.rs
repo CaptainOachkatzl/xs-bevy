@@ -1,7 +1,7 @@
 use std::{cell::OnceCell, collections::BTreeMap, sync::Arc};
 
 use crate::{
-    two_dimendions::grid::{patterns::GridPattern, to_grid_index, Grid, Position, RectSize},
+    dim2::grid::{patterns::GridPattern, to_grid_index, Grid, Position, RectSize},
     FactoryCache,
 };
 

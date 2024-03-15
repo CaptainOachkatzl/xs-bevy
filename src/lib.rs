@@ -1,4 +1,4 @@
-pub mod two_dimendions;
+pub mod dim2;
 
 pub mod factory_cache;
 pub use factory_cache::FactoryCache;

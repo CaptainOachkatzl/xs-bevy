@@ -2,7 +2,7 @@ use std::{cell::OnceCell, collections::BTreeMap, sync::Arc};
 
 use crate::{
     factory_cache::FactoryCache,
-    two_dimendions::grid::{Grid, Position},
+    dim2::grid::{Grid, Position},
 };
 
 use super::grid_pattern::GridPattern;

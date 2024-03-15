@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::{two_dimendions::grid::{Position, RectSize}, ScreenView};
+use crate::{dim2::grid::{Position, RectSize}, ScreenView};
 
 /// converts points inside a grid into their screen coordinates
 #[derive(Clone, Copy)]

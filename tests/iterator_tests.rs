@@ -1,4 +1,4 @@
-use xs_games_rs::two_dimendions::grid::{to_grid_position, Grid};
+use xs_games_rs::dim2::grid::{to_grid_position, Grid};
 
 #[test]
 fn iterate_over_end() {
