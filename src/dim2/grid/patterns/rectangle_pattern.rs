@@ -11,6 +11,7 @@ pub fn rectangle_pattern(offset_left: usize, offset_up: usize, offset_right: usi
     > = OnceCell::new();
 
     let cache = unsafe {
+        #[allow(static_mut_refs)]
         PATTERN_CACHE.get_or_init(|| FactoryCache::new(BTreeMap::new(), Box::new(|(l, u, r, d)| new_rectangle_pattern(l, u, r, d))))
     };
 

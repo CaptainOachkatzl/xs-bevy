@@ -9,6 +9,7 @@ use super::grid_pattern::GridPattern;
 
 pub fn cross_pattern(arm_length: usize) -> Arc<GridPattern> {
     static mut PATTERN_CACHE: OnceCell<FactoryCache<usize, GridPattern, BTreeMap<usize, Arc<GridPattern>>>> = OnceCell::new();
+    #[allow(static_mut_refs)]
     let cache = unsafe { PATTERN_CACHE.get_or_init(|| FactoryCache::new(BTreeMap::new(), Box::new(new_cross_pattern))) };
     cache.get(arm_length)
 }
