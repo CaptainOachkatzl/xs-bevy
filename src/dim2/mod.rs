@@ -1,4 +1,4 @@
 pub mod grid;
-pub mod kinetic_body;
+pub mod collider;
 pub mod vec;
 pub mod movement;

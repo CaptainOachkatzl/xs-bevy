@@ -31,20 +31,13 @@ impl Rectangle {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum CollisionFrame {
+pub enum Collider {
     Rectangle(RelativeRectangle),
     Circle(f32),
 }
 
-impl CollisionFrame {
-    pub fn collision(
-        &self,
-        position_x: f32,
-        position_y: f32,
-        other: &CollisionFrame,
-        position_other_x: f32,
-        position_other_y: f32,
-    ) -> bool {
+impl Collider {
+    pub fn collision(&self, position_x: f32, position_y: f32, other: &Collider, position_other_x: f32, position_other_y: f32) -> bool {
         match (self, other) {
             (Self::Circle(radius_self), Self::Circle(radius_other)) => collision_circles(
                 *radius_self,
@@ -80,12 +73,7 @@ impl CollisionFrame {
         }
     }
 
-    pub fn collision_with_any<'a>(
-        &self,
-        position_x: f32,
-        position_y: f32,
-        others: impl Iterator<Item = (&'a CollisionFrame, f32, f32)>,
-    ) -> bool {
+    pub fn collision_with_any<'a>(&self, position_x: f32, position_y: f32, others: impl Iterator<Item = (&'a Collider, f32, f32)>) -> bool {
         for other in others.into_iter() {
             if self.collision(position_x, position_y, other.0, other.1, other.2) {
                 return true;
@@ -145,26 +133,26 @@ mod test {
     use test_case::test_case;
 
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
         true; "complete overlap")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 2., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 2., 0.,
         false; "no collision on horizontal line")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 2.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 2.,
         false; "no collision on vertical line")]
     #[test_case(
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
-        CollisionFrame::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0.9, 0.9,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0., 0.,
+        Collider::Rectangle(RelativeRectangle{ height: 1., width: 1., offset_x: 0., offset_y: 0. }), 0.9, 0.9,
         true; "corner collision")]
     fn rectangle_collisions(
-        frame1: CollisionFrame,
+        frame1: Collider,
         center1_x: f32,
         center1_y: f32,
-        frame2: CollisionFrame,
+        frame2: Collider,
         center2_x: f32,
         center2_y: f32,
         expected: bool,
